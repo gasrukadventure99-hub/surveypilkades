@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURAT SUARA - PEMILIHAN KEPALA DESA TOROToT HEONG TAHUN 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+
+        /* Border Highlight untuk Kandidat Terpilih (Persis Gambar 1) */
+        .candidate-card.selected {
+            border: 3px solid #ea580c;
+            box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.3);
+        }
+
+        .candidate-card {
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Button Styling sesuai sampel */
+        .btn-orange {
+            background-color: #ea580c;
+            color: #ffffff;
+        }
+        .btn-orange:hover {
+            background-color: #c2410c;
+        }
+        .btn-orange:disabled {
+            background-color: #c2410c;
+            opacity: 0.9;
+            cursor: not-allowed;
+        }
+
+        /* Modal Overlay Transition */
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Blur Effect untuk Kandidat 1 & 2 */
+        .blur-candidate {
+            filter: blur(8px);
+            -webkit-filter: blur(8px);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-up {
+            animation: scaleUp 0.2s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center py-6 px-4 bg-white">
+
+    <!-- Tombol Pengaturan Integrasi Google Sheets (Pojok Kanan Atas) -->
+    <div class="fixed top-4 right-4 z-40">
+        <button onclick="toggleSettingsModal()" class="bg-white p-2.5 rounded-full shadow-md hover:bg-slate-100 text-slate-600 transition flex items-center justify-center border border-slate-200" title="Pengaturan Google Sheets">
+            <i class="fa-solid fa-gear text-lg"></i>
+        </button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="w-full max-w-4xl mx-auto flex flex-col items-center">
+
+        <!-- HEADER BANNER -->
+        <header class="text-center mb-8 flex flex-col items-center">
+            <!-- Logo Kab. Subang -->
+            <div class="w-16 h-20 mb-3 flex items-center justify-center">
+                <img src="logo.png" 
+                     alt="Lambang Kabupaten Subang" 
+                     class="h-16 md:h-20 w-auto object-contain drop-shadow"
+                     onerror="this.onerror=null; this.src='https://placehold.co/100x120/047857/ffffff?text=SUBANG';">
+                <svg viewBox="0 0 100 120" class="w-full h-full drop-shadow-sm">
+                    <!-- Outer Shield -->
+                    <path d="M50 5 L90 20 L90 70 C90 95 50 115 50 115 C50 115 10 95 10 70 L10 20 Z" fill="#047857" stroke="#fbbf24" stroke-width="4"/>
+                    <!-- Inner Shield Gold -->
+                    <path d="M50 12 L82 25 L82 66 C82 86 50 104 50 104 C50 104 18 86 18 66 L18 25 Z" fill="#065f46" stroke="#fbbf24" stroke-width="1.5"/>
+                    <!-- Emblem elements -->
+                    <circle cx="50" cy="45" r="14" fill="#fbbf24" />
+                    <polygon points="50,34 54,44 64,44 56,50 59,60 50,54 41,60 44,50 36,44 46,44" fill="#15803d"/>
+                    <!-- Rice & Cotton Symbol -->
+                    <path d="M30 80 Q50 70 70 80" stroke="#fef08a" stroke-width="4" fill="none"/>
+                    <!-- Ribbon Banner -->
+                    <rect x="20" y="90" width="60" height="12" rx="3" fill="#dc2626" />
+                    <text x="50" y="99" font-size="7" fill="#ffffff" font-weight="bold" text-anchor="middle">SUBANG</text>
+                </svg>
+            </div>
+
+            <h1 class="text-base md:text-xl font-extrabold tracking-wide text-slate-800 uppercase">SURAT SUARA</h1>
+            <h2 class="text-base md:text-base font-semibold text-slate-700 uppercase ">PEMILIHAN KEPALA SUKU CIMACAN</h2>
+            <h3 class="text-sm md:text-base font-semibold text-slate-600 uppercase">KECAMATAN TUMARITIS KABUPATEN SUBANG</h3>
+            <h4 class="text-sm md:text-base font-semibold text-slate-600 uppercase">TAHUN 2026</h4>
+            <!-- <h5 class="text-sm md:text-base font-bold text-slate-800 uppercase mt-0.5">TAHUN 2026</h5>-->
+        </header>
+
+        <!-- KANDIDAT CARDS GRID (Persis Gambar 1) -->
+        <main class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6 max-w-3xl mb-8">
+            
+            <!-- Kandidat 1 (Foto & Nama DIBLUR) -->
+            <div id="card-1" onclick="selectCandidate(1, 'Kandidat 1', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80', true)" class="candidate-card bg-white rounded-xl overflow-hidden cursor-pointer flex flex-col justify-between transition-all">
+                <div class="relative overflow-hidden">
+                    <!-- Nomor Urut -->
+                    <div class="absolute top-3 left-3 bg-orange-600 text-white font-black text-lg w-8 h-8 rounded-lg flex items-center justify-center shadow-md z-10">
+                        1
+                    </div>
+                    <!-- Foto Kandidat (Blurred) -->
+                    <div class="w-full h-72 md:h-80 bg-red-600 overflow-hidden flex items-center justify-center">
+                        <img id="img-1" src="eko.png" alt="Kandidat 1" class="w-full h-full object-cover object-top blur-candidate scale-110">
+                    </div>
+                </div>
+                <!-- Nama Kandidat (Blurred) -->
+                <div class="py-4 px-3 text-center border-t border-slate-100 bg-white">
+                    <p class="font-bold text-slate-800 text-lg md:text-xl truncate blur-candidate">Nama Calon</p>
+                </div>
+            </div>
+
+            <!-- Kandidat 2 (Foto & Nama DIBLUR) -->
+            <div id="card-2" onclick="selectCandidate(2, 'Kandidat 2', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80', true)" class="candidate-card bg-white rounded-xl overflow-hidden cursor-pointer flex flex-col justify-between transition-all">
+                <div class="relative overflow-hidden">
+                    <!-- Nomor Urut -->
+                    <div class="absolute top-3 left-3 bg-orange-600 text-white font-black text-lg w-8 h-8 rounded-lg flex items-center justify-center shadow-md z-10">
+                        2
+                    </div>
+                    <!-- Foto Kandidat (Blurred) -->
+                    <div class="w-full h-72 md:h-80 bg-red-600 overflow-hidden flex items-center justify-center">
+                        <img id="img-2" src="surnim.png" alt="Kandidat 2" class="w-full h-full object-cover object-top blur-candidate scale-110">
+                    </div>
+                </div>
+                <!-- Nama Kandidat (Blurred) -->
+                <div class="py-4 px-3 text-center border-t border-slate-100 bg-white">
+                    <p class="font-bold text-slate-800 text-lg md:text-xl truncate blur-candidate">Nama Calon</p>
+                </div>
+            </div>
+
+            <!-- Kandidat 3 (Saepul Majid - CLEAR / JELAS) -->
+            <div id="card-3" onclick="selectCandidate(3, 'Wahyu Widodo', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&auto=format&fit=crop&q=80', false)" class="candidate-card bg-white rounded-xl overflow-hidden cursor-pointer flex flex-col justify-between transition-all">
+                <div class="relative overflow-hidden">
+                    <!-- Nomor Urut -->
+                    <div class="absolute top-3 left-3 bg-orange-600 text-white font-black text-lg w-8 h-8 rounded-lg flex items-center justify-center shadow-md z-10">
+                        3
+                    </div>
+                    <!-- Foto Kandidat (Clear) -->
+                    <div class="w-full h-72 md:h-80 bg-red-600 overflow-hidden flex items-center justify-center">
+                        <img id="img-3" src="wahyu_widodo.png" alt="wahyu_widodo" class="w-full h-full object-cover object-top">
+                    </div>
+                </div>
+                <!-- Nama Kandidat (Clear) -->
+                <div class="py-4 px-3 text-center border-t border-slate-100 bg-white">
+                    <p class="font-bold text-slate-800 text-lg md:text-xl truncate">Wahyu Widodo</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- TOMBOL UTAMA "PILIH KANDIDAT INI" -->
+        <div class="w-full max-w-md px-4">
+            <button id="btn-submit-main" onclick="openConfirmationModal()" disabled class="w-full py-4 px-6 rounded-xl font-bold text-lg text-white btn-orange shadow-lg transition-all duration-200">
+                Pilih Kandidat Ini
+            </button>
+        </div>
+
+    </div>
+
+    <!-- MODAL GAMBAR 2: KONFIRMASI PEMILIHAN -->
+    <div id="modal-confirm" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-scale-up text-center relative">
+            
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Konfirmasi Pemilihan</h3>
+            <p class="text-orange-500 font-medium text-sm mb-5">Apa Anda yakin akan memilih kandidat ini?</p>
+
+            <!-- Foto Kandidat Modal -->
+            <div class="w-48 h-60 mx-auto bg-red-600 rounded-xl overflow-hidden mb-4 shadow-md flex items-center justify-center">
+                <img id="modal-candidate-img" src="" alt="Foto Kandidat" class="w-full h-full object-cover object-top">
+            </div>
+
+            <!-- Nama Kandidat Modal -->
+            <h4 id="modal-candidate-name" class="text-xl font-bold text-slate-800 mb-8">Wahyu Widodo</h4>
+
+            <!-- Action Buttons (Ulangi & Pilih) -->
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="closeConfirmationModal()" class="py-3 px-4 rounded-xl font-bold text-slate-700 hover:bg-slate-100 transition border border-transparent text-base">
+                    Ulangi
+                </button>
+                <button id="btn-vote-submit" onclick="submitVote()" class="py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md transition text-base">
+                    Pilih
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL GAMBAR 3: NOTIFIKASI BERHASIL -->
+    <div id="modal-success" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl animate-scale-up text-center">
+            
+            <!-- Icon Centang Hijau (Circle Green Check Persis Gambar 3) -->
+            <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-4xl shadow-lg">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Terima Kasih</h3>
+            <p class="text-slate-500 font-medium text-sm mb-6">Suara berhasil dikirim dan tersimpan.</p>
+
+            <button onclick="resetVoteForm()" class="w-full py-3 px-4 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL PENGATURAN DATABASE GOOGLE SPREADSHEET -->
+    <div id="modal-settings" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-scale-up text-left">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-database text-blue-600"></i> Pengaturan Google Sheets
+                </h3>
+                <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Masukkan Web App URL dari Google Apps Script agar suara otomatis tercatat di Google Spreadsheet Anda.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Web App URL (Google Apps Script)</label>
+                    <input type="url" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs font-bold text-slate-700 mb-1"><i class="fa-solid fa-code text-slate-500 mr-1"></i> Format Sheet:</p>
+                    <p class="text-xs text-slate-600">Nama Sheet: <span class="font-mono bg-amber-100 px-1 py-0.5 rounded text-amber-900 font-bold">data pemilih</span></p>
+                    <p class="text-xs text-slate-600 mt-1">Kolom A: <span class="font-mono">No. urut</span> | Kolom B: <span class="font-mono">nama Calon</span></p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-2">
+                <button onclick="saveSettings()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700">Simpan URL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIKA APLIKASI -->
+    <script>
+        // URL Web App Google Apps Script Default
+        // Masukkan URL Web App Google Apps Script Anda di bawah ini
+        const DEFAULT_GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3l3lqfF_uBWpe3jHCja5uZh7KRJTurpPjSxlkbTfLQAJCBqc5n6eB5DXOyBbyiJDdng/exec';
+
+        // State Variabel
+        let selectedCandidate = null; // { noUrut: number, nama: string, photo: string, isBlurred: boolean }
+        let hasVoted = false;
+        let googleScriptUrl = localStorage.getItem('googleScriptUrl') || DEFAULT_GOOGLE_SCRIPT_URL;
+
+        // Auto select kandidat no 3 secara default seperti tampilan Gambar 1
+        window.addEventListener('DOMContentLoaded', () => {
+            selectCandidate(3, 'Wahyu Widodo', 'wahyu_widodo.png', false);
+        });
+
+        // Load URL ke input modal pengaturan
+        document.getElementById('script-url-input').value = googleScriptUrl;
+
+        /**
+         * 1. Fungsi Memilih Kandidat pada Tampilan Gambar 1
+         */
+        function selectCandidate(noUrut, nama, photo, isBlurred) {
+            if(hasVoted) return; // Kunci jika suara sudah dikirim
+
+            selectedCandidate = { noUrut, nama, photo, isBlurred };
+
+            // Clear highlight pada semua card
+            for(let i=1; i<=3; i++) {
+                const card = document.getElementById(`card-${i}`);
+                if(card) {
+                    card.classList.remove('selected');
+                }
+            }
+
+            // Tambahkan border highlight orange pada kandidat terpilih
+            const selectedCard = document.getElementById(`card-${noUrut}`);
+            if(selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+
+            // Aktifkan Tombol "Pilih Kandidat Ini"
+            const mainBtn = document.getElementById('btn-submit-main');
+            mainBtn.disabled = false;
+            mainBtn.innerText = "Pilih Kandidat Ini";
+            mainBtn.className = "w-full py-4 px-6 rounded-xl font-bold text-lg text-white btn-orange shadow-lg transition-all duration-200 cursor-pointer";
+        }
+
+        /**
+         * 2. Buka Modal Konfirmasi (Gambar 2)
+         */
+        function openConfirmationModal() {
+            if (!selectedCandidate) return;
+
+            const modalImg = document.getElementById('modal-candidate-img');
+            const modalName = document.getElementById('modal-candidate-name');
+
+            modalName.innerText = selectedCandidate.nama;
+            modalImg.src = selectedCandidate.photo;
+
+            // Jika kandidat yang dipilih diblur (kandidat 1 / 2)
+            if (selectedCandidate.isBlurred) {
+                modalImg.classList.add('blur-candidate', 'scale-110');
+                modalName.classList.add('blur-candidate');
+            } else {
+                modalImg.classList.remove('blur-candidate', 'scale-110');
+                modalName.classList.remove('blur-candidate');
+            }
+
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        /**
+         * 3. Tutup Modal Konfirmasi (Tombol "Ulangi") -> Kembali ke Gambar 1
+         */
+        function closeConfirmationModal() {
+            document.getElementById('modal-confirm').classList.add('hidden');
+        }
+
+        /**
+         * 4. Kirim Data Pemilihan (Tombol "Pilih" di Modal Konfirmasi - Gambar 2 ke Gambar 3)
+         */
+        async function submitVote() {
+            if (!selectedCandidate) return;
+
+            const voteBtn = document.getElementById('btn-vote-submit');
+            voteBtn.disabled = true;
+            voteBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...';
+
+            const activeUrl = googleScriptUrl || DEFAULT_GOOGLE_SCRIPT_URL;
+
+            // Kirim ke Google Apps Script Spreadsheet
+            if (activeUrl && activeUrl !== 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec') {
+                try {
+                    // Kirim dengan parameter form-urlencoded & mode no-cors untuk bypass pembatasan CORS Google Apps Script
+                    const formData = new URLSearchParams();
+                    formData.append('noUrut', selectedCandidate.noUrut);
+                    formData.append('namaCalon', selectedCandidate.nama);
+
+                    await fetch(activeUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: formData.toString()
+                    });
+                } catch (error) {
+                    console.error("Error kirim data ke Google Sheets:", error);
+                }
+            } else {
+                // Simulasi delay 500ms jika URL Web App belum dikonfigurasi
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            // Reset status tombol modal
+            voteBtn.disabled = false;
+            voteBtn.innerText = "Pilih";
+
+            // Sembunyikan Modal Konfirmasi
+            closeConfirmationModal();
+
+            // Sesuai Gambar 3: Status Tombol Utama Berubah Jadi "✓ Suara Terkirim" (Disabled Gray/Dark Style)
+            hasVoted = true;
+            const mainBtn = document.getElementById('btn-submit-main');
+            mainBtn.disabled = true;
+            mainBtn.innerText = "✓ Suara Terkirim";
+            mainBtn.className = "w-full py-4 px-6 rounded-xl font-bold text-lg text-slate-700 bg-slate-300 shadow border border-slate-400 cursor-not-allowed transition-all duration-200";
+
+            // Sesuai Gambar 3: Tampilkan Popup Notifikasi "Terima Kasih"
+            document.getElementById('modal-success').classList.remove('hidden');
+        }
+
+        /**
+         * Reset Form untuk Pemilih Baru
+         */
+        function resetVoteForm() {
+            document.getElementById('modal-success').classList.add('hidden');
+            hasVoted = false;
+
+            // Kembalikan ke kandidat no 3 terpilih default
+           selectCandidate(3, 'Wahyu Widodo', 'wahyu_widodo.png', false);;
+        }
+
+        /**
+         * Pengaturan modal Google Script
+         */
+        function toggleSettingsModal() {
+            const modal = document.getElementById('modal-settings');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const urlInput = document.getElementById('script-url-input').value.trim();
+            googleScriptUrl = urlInput || DEFAULT_GOOGLE_SCRIPT_URL;
+            localStorage.setItem('googleScriptUrl', googleScriptUrl);
+            
+            // Custom Toast Message menggantikan alert browser
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm font-semibold transition';
+            toast.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> URL Google Apps Script Berhasil Disimpan!';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+
+            toggleSettingsModal();
+        }
+    </script>
+</body>
+</html>
